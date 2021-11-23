@@ -4,12 +4,13 @@ import { json } from "body-parser";
 import cors from "cors";
 import { errorHandler } from "./middlewares/error-handler";
 import { NotFoundError } from "./common/errors/not-found-error";
+import router from "./routes/index.routes";
 
 const app = express();
 app.use(cors());
 app.use(json());
 
-// Here you init you APIs
+app.use('/api', router)
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
