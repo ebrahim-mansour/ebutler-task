@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 // that are requried to create a new Department
 interface DepartmentAttrs {
   name: string;
+  description?: string;
 }
 
 // An interface that describes the properties

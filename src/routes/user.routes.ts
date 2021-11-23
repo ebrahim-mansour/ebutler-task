@@ -1,6 +1,6 @@
 import express from "express";
 import { body, param } from "express-validator";
-import { validateBody } from "../common/constants";
+import { UserRoles, ValidateBody } from "../common/constants";
 import { BadRequestError } from "../common/errors/bad-request-error";
 import {
   getAllUsersController,
@@ -13,14 +13,13 @@ import { isSuperAdmin } from "../middlewares/is-super-admin";
 import { requireAuth } from "../middlewares/require-auth";
 import { validateRequest } from "../middlewares/validate-request";
 import { Department } from "../models/department.model";
-import { Role } from "../models/role.model";
 import { User } from "../models/user.model";
 
 const router = express.Router();
 
-const validateUserBody = (validate: validateBody): any => {
+const validateUserBody = (validate: ValidateBody): any => {
   switch (validate) {
-    case validateBody.create:
+    case ValidateBody.create:
       return [
         body("firstName")
           .isString()
@@ -58,17 +57,9 @@ const validateUserBody = (validate: validateBody): any => {
           .trim()
           .isLength({ min: 4, max: 20 })
           .withMessage("Password must be between 4 and 20 characters"),
-        body("roleId")
-          .isMongoId()
-          .withMessage("Invalid id")
-          .custom(async (roleId: string) => {
-            const role = await Role.findById(roleId);
-
-            if (!role) {
-              throw new BadRequestError("Invalid role id");
-            }
-            return true;
-          }),
+        body("role")
+          .isIn(Object.values(UserRoles))
+          .withMessage("Invalid user role"),
         body("departmentId")
           .optional()
           .isMongoId()
@@ -83,12 +74,12 @@ const validateUserBody = (validate: validateBody): any => {
           }),
       ];
 
-    case validateBody.patch:
+    case ValidateBody.patch:
       return [
-        param("id").isMongoId().withMessage("Invalid id"),
         body("departmentId")
           .isMongoId()
           .withMessage("Invalid id")
+          .bail()
           .custom(async (departmentId: string) => {
             const department = await Department.findById(departmentId);
 
@@ -110,14 +101,16 @@ router.use(isSuperAdmin, requireAuth);
 router.get("/", getAllUsersController);
 router.post(
   "/",
-  validateUserBody(validateBody.create),
+  validateUserBody(ValidateBody.create),
   validateRequest,
   createUserController
 );
 router.get("/:id", validateUserId(), validateRequest, getUserByIdController);
 router.patch(
   "/:id",
-  validateUserBody(validateBody.patch),
+  validateUserId(),
+  validateRequest,
+  validateUserBody(ValidateBody.patch),
   validateRequest,
   assignDepartController
 );

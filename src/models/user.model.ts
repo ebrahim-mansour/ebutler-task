@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { UserRoles } from "../common/constants";
 import { Password } from "../services/password";
 
 // An interface that describes the properties
@@ -9,7 +10,7 @@ interface UserAttrs {
   username: string;
   email: string;
   password: string;
-  roleId: string;
+  role: string;
   departmentId?: string;
 }
 
@@ -27,7 +28,7 @@ interface UserDoc extends mongoose.Document {
   username: string;
   email: string;
   password: string;
-  roleId: string;
+  role: string;
   departmentId?: string;
 }
 
@@ -52,9 +53,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    roleId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
+    role: {
+      type: String,
+      required: true,
+      enum: Object.values(UserRoles),
     },
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
