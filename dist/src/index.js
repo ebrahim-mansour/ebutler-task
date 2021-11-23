@@ -42,12 +42,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = __importDefault(require("mongoose"));
 var app_1 = require("./app");
 var start = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var err_1;
+    var err_1, port;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 if (!process.env.MONGO_URI) {
-                    throw new Error('MONGO_URI must be defined');
+                    throw new Error("MONGO_URI must be defined");
                 }
                 _a.label = 1;
             case 1:
@@ -59,15 +59,16 @@ var start = function () { return __awaiter(void 0, void 0, void 0, function () {
                     })];
             case 2:
                 _a.sent();
-                console.log('Connected to MongoDb');
+                console.log("Connected to MongoDb");
                 return [3 /*break*/, 4];
             case 3:
                 err_1 = _a.sent();
                 console.error(err_1);
                 return [3 /*break*/, 4];
             case 4:
-                app_1.app.listen(3000, function () {
-                    console.log('Listening on port 3000!!!!!!!!');
+                port = process.env.PORT || 3000;
+                app_1.app.listen(port, function () {
+                    console.log("Listening on port " + port + "!!!!!!!!");
                 });
                 return [2 /*return*/];
         }
