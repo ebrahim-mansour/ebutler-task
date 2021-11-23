@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev -r dotenv/config src/index.ts"
+    "start": "ts-node-dev -r dotenv/config src/index.ts",
+    "data-import": "seed --db-name ebutler ./data"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,8 @@
     "typescript": "^3.8.3"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "mongo-seeding": "^3.7.0",
+    "mongo-seeding-cli": "^3.7.0"
   }
 }
