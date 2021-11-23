@@ -9,7 +9,7 @@ declare global {
         lastName?: string;
         username: string;
         email: string;
-        roleId?: string;
+        role?: string;
         departmentId?: string;
       };
     }

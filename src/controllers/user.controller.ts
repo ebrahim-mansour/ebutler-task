@@ -3,15 +3,8 @@ import { NotFoundError } from "../common/errors/not-found-error";
 import { User } from "../models/user.model";
 
 export const createUserController = async (req: Request, res: Response) => {
-  const {
-    firstName,
-    lastName,
-    username,
-    email,
-    password,
-    roleId,
-    departmentId,
-  } = req.body;
+  const { firstName, lastName, username, email, password, role, departmentId } =
+    req.body;
 
   const user = User.build({
     firstName,
@@ -19,7 +12,7 @@ export const createUserController = async (req: Request, res: Response) => {
     username,
     email,
     password,
-    roleId,
+    role,
     departmentId,
   });
   await user.save();
@@ -28,13 +21,12 @@ export const createUserController = async (req: Request, res: Response) => {
 };
 
 export const getAllUsersController = async (req: Request, res: Response) => {
-  const { searchKey, roleId, departmentId } = req.query;
+  const { searchKey, role, departmentId } = req.query;
 
   let query = {} as any;
   let limit = +(req.query.limit || 50);
   let page = +(req.query.page || 1);
   let skip = (page - 1) * limit;
-  let popQuery = [] as any;
 
   if (searchKey) {
     query.$or = [
@@ -43,18 +35,15 @@ export const getAllUsersController = async (req: Request, res: Response) => {
     ];
   }
 
-  if (roleId) {
-    query.roleId = roleId;
+  if (role) {
+    query.role = role;
   }
 
   if (departmentId) {
     query.departmentId = departmentId;
   }
 
-  const users = await User.find(query)
-    .skip(skip)
-    .limit(limit)
-    .populate(popQuery);
+  const users = await User.find(query).skip(skip).limit(limit);
 
   res.status(200).send({ users });
 };
